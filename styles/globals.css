@@ -25,3 +25,8 @@ a {
   font-family: "lobster";
   src: url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
 }
+
+
+::-webkit-scrollbar{
+  width: 0px;
+}
