@@ -43,7 +43,7 @@ export default function Home() {
       </Head>
       <main className='px-10 bg-white md:px-20 lg:px-60 dark:bg-darkbg dark:text-white italic' >
         <section >
-          <nav className={`py-10 mb-10 flex   justify-between font-lobster text-xl md:text-3xl `} >
+          <nav className='py-10 mb-10 flex   justify-between font-lobster text-xl md:text-3xl ' >
             <h1 className='  font-lobster dark:text-hovcol text-gray-700 mx-2 my-2 '>PORTFOLIO</h1>
             <ul className='flex items-center'>
               <div className='md:flex hidden'>
@@ -54,7 +54,7 @@ export default function Home() {
                 <li className='text-xl dark:hover:text-hovcol mx-2 dark:text-blue-200 text-blue-800'><a href='#achievment'>Achievment</a></li>
                 <li className='text-xl dark:hover:text-hovcol mx-2 dark:text-blue-200 text-blue-800'><a href='#contact'>Contact</a></li>
               </div>
-              <li className='py-2 px-4 bg-blue-400 hover:bg-blue-500 rounded-md  text-black ml-5 font-lobster dark:bg-slate-800  dark:hover:bg-slate-700 dark:text-hovcol '><a href='https://drive.google.com/file/d/1Ls0VVFNDAyzvsMDdDHAMZAIHpc8Qr_Yn/view?usp=share_link' target="_blank">Resume</a></li>
+              <li className='py-2 px-4 bg-blue-400 hover:bg-blue-500 rounded-md  text-black ml-5 font-lobster dark:bg-slate-800  dark:hover:bg-slate-700 dark:text-hovcol '><a href='https://drive.google.com/file/d/1Ls0VVFNDAyzvsMDdDHAMZAIHpc8Qr_Yn/view?usp=share_link' target="_blank" rel='noopener noreferrer'>Resume</a></li>
               <li className=' cursor-pointer ml-3 '><RiMoonFill onClick={() => {
                 setdark(!dark)
               }} className="  dark:hidden " /></li>
@@ -72,17 +72,17 @@ export default function Home() {
             <p className=' text-lg py-3 leading-7 max-w-lg mx-auto md:text-2xl'>Highly motivated  always eager to learn new skills passionate about web-development  and problem-solving wanted to contribute in software development field</p>
           </div>
           <div className='flex flex-wrap justify-center text-3xl text-gray-700 gap-16 pb-20 md:text-5xl  dark:text-slate-300'>
-            <a href='https://www.linkedin.com/in/jharaghav/' target="_blank" >
+            <a href='https://www.linkedin.com/in/jharaghav/' target="_blank"  rel='noopener noreferrer'>
               <AiFillLinkedin className='hover:text-blue-800 hover:dark:text-hovcol hover:-translate-y-1' />
             </a>
-            <a href='https://github.com/jharaghav32' target="_blank">
+            <a href='https://github.com/jharaghav32' target="_blank" rel='noopener noreferrer'>
               <AiFillGithub className='hover:text-black hover:dark:text-hovcol hover:-translate-y-1' />
             </a>
-            <a href='https://leetcode.com/raghav32/' target="_blank">
+            <a href='https://leetcode.com/raghav32/' target="_blank" rel='noopener noreferrer'>
 
               <SiLeetcode className='hover:text-orange-400 hover:dark:text-hovcol hover:-translate-y-1' />
             </a>
-            <a href='https://www.codechef.com/users/jharaghav_3209' target="_blank">
+            <a href='https://www.codechef.com/users/jharaghav_3209' target="_blank" rel='noopener noreferrer'>
 
               <SiCodechef className='hover:text-orange-700 hover:dark:text-hovcol hover:-translate-y-1 ' />
             </a>
@@ -113,7 +113,7 @@ export default function Home() {
               <div className='flex justify-center m-1'>
                 <Image src="/has.jpg" alt='' width={100} height={100} />
               </div>
-              <h3 className='text-2xl md:text-3xl'><span className='dark:text-blue-200 text-blue-800'>Cloud-Memories</span><a href='https://github.com/jharaghav32/CloudMemories' target="_blank">
+              <h3 className='text-2xl md:text-3xl'><span className='dark:text-blue-200 text-blue-800'>Cloud-Memories</span><a href='https://github.com/jharaghav32/CloudMemories' target="_blank" rel='noopener noreferrer'>
                 <FiGithub className=' inline cursor-pointer hover:text-blue-800 dark:hover:text-hovcol text-xl md:text-2xl ml-3' />
               </a>
               </h3>
@@ -127,7 +127,7 @@ export default function Home() {
                 <Image src="/has.jpg" alt='' width={100} height={100} className=''  />
               </div>
               <h3 className='text-2xl md:text-3xl'><span className='dark:text-blue-200 text-blue-800'>CoinWorld</span>
-                <a href='https://coinworld25.netlify.app/' target="_blank">
+                <a href='https://coinworld25.netlify.app/' target="_blank" rel='noopener noreferrer'>
                   <FiExternalLink className=' inline  hover:text-blue-800 cursor-pointer dark:hover:text-hovcol text-xl md:text-2xl ml-3 mb-2' /></a></h3>
               <p className='text-lg py-1 md:text-xl'>Implemented a coinworld which gives the data of all cryptocurrencies its prices,its market valuation and daily changes
                 it gives the trending graph of various currencies and various news related to crypto</p>
@@ -139,7 +139,7 @@ export default function Home() {
                 <Image src="/has.jpg" alt='' width={100} height={100} />
               </div>
               <h3 className='text-2xl md:text-3xl'><span className='dark:text-blue-200 text-blue-800'>YourNews</span>
-                <a href='https://github.com/jharaghav32/YourNews' target="_blank">
+                <a href='https://github.com/jharaghav32/YourNews' target="_blank" rel='noopener noreferrer'>
                   <FiGithub className=' inline cursor-pointer hover:text-blue-800 dark:hover:text-hovcol text-xl md:text-2xl ml-3' /></a></h3>
               <p className='text-lg py-1 md:text-xl'>Implemented a news app which provides us the latest news with publication date , it also provides category wise news like cricket,science,entertainment etc</p>
               <h4 className='text-xl md:text-2xl'>ReactJs NewsApi</h4>
@@ -150,9 +150,9 @@ export default function Home() {
                 <Image src="/has.jpg" alt='' width={100} height={100} />
               </div>
               <h3 className='text-2xl md:text-3xl'><span className='dark:text-blue-200 text-blue-800'>Loop</span>
-                <a href='https://github.com/Vishalrai2002/MAIT_SIH' target="_blank">
+                <a href='https://github.com/Vishalrai2002/MAIT_SIH' target="_blank" rel='noopener noreferrer'>
                   <FiGithub className=' inline cursor-pointer hover:text-blue-800 dark:hover:text-hovcol text-xl md:text-2xl ml-3' /></a></h3>
-              <p className='text-lg py-1 md:text-xl'>It provides   Real time tracking of students learning's outcomes and their academic progress  , track record of student's performance in both academic and cocurricular activities
+              <p className='text-lg py-1 md:text-xl'>It provides   Real time tracking of students learnings outcomes and their academic progress  , track record of student&apos;s performance in both academic and cocurricular activities
                 schools.</p>
               <h4 className='text-xl md:text-2xl'>HTML CSS Bootstrap Javascript</h4>
 
@@ -273,11 +273,11 @@ export default function Home() {
             <div className='py-5'>
               <p className='text-lg py-3 leading-8 md:text-2xl max-w-lg mx-auto'>I am currently looking for new opportunities and I am interested in Software Development Role .Kindly Contact me through LinkedIn or Mail </p>
               <div className='flex gap-10 justify-center text-2xl md:text-3xl py-2'>
-                <a href='https://www.linkedin.com/in/jharaghav/' target="_blank">
+                <a href='https://www.linkedin.com/in/jharaghav/' target="_blank  " rel='noopener noreferrer'>
 
                   <GrLinkedinOption className=' hover:text-blue-800 dark:hover:text-hovcol hover:-translate-y-1' />
                 </a>
-                <a href='mailto:raghavkumarjha3209@gmail.com' target="_blank">
+                <a href='mailto:raghavkumarjha3209@gmail.com' target="_blank" rel='noopener noreferrer'>
 
                   <SiGmail className='hover:text-red-600 dark:hover:text-hovcol hover:-translate-y-1' />
                 </a>
