@@ -55,7 +55,7 @@ export default function Home() {
                 <li className='text-xl dark:hover:text-hovcol mx-2 dark:text-blue-200 text-blue-800'><a href='#achievment'>Achievment</a></li>
                 <li className='text-xl dark:hover:text-hovcol mx-2 dark:text-blue-200 text-blue-800'><a href='#contact'>Contact</a></li>
               </div>
-              <li className='py-2 px-4 bg-blue-400 hover:bg-blue-500 rounded-md  text-black ml-5 font-lobster dark:bg-slate-800  dark:hover:bg-slate-700 dark:text-hovcol '><a href='https://drive.google.com/file/d/1_iql7pkvaotF-ruz1XiSOv7FA4KAea4e/view?usp=share_link' target="_blank" rel='noopener noreferrer'>Resume</a></li>
+              <li className='py-2 px-4 bg-blue-400 hover:bg-blue-500 rounded-md  text-black ml-5 font-lobster dark:bg-slate-800  dark:hover:bg-slate-700 dark:text-hovcol '><a href='#' target="_blank" rel='noopener noreferrer'>Resume</a></li>
               <li className=' cursor-pointer ml-3 '><RiMoonFill onClick={() => {
                 setdark(!dark)
               }} className="  dark:hidden " /></li>
