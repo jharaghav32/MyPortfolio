@@ -55,7 +55,7 @@ export default function Home() {
                 <li className='text-xl dark:hover:text-hovcol mx-2 dark:text-blue-200 text-blue-800'><a href='#achievment'>Achievment</a></li>
                 <li className='text-xl dark:hover:text-hovcol mx-2 dark:text-blue-200 text-blue-800'><a href='#contact'>Contact</a></li>
               </div>
-              <li className='py-2 px-4 bg-blue-400 hover:bg-blue-500 rounded-md  text-black ml-5 font-lobster dark:bg-slate-800  dark:hover:bg-slate-700 dark:text-hovcol '><a href='https://drive.google.com/file/d/1BhoTwewBprnSG5Q9xTRUW_9lgyz3aG82/view?usp=share_link' target="_blank" rel='noopener noreferrer'>Resume</a></li>
+              <li className='py-2 px-4 bg-blue-400 hover:bg-blue-500 rounded-md  text-black ml-5 font-lobster dark:bg-slate-800  dark:hover:bg-slate-700 dark:text-hovcol '><a href='https://drive.google.com/file/d/1_iql7pkvaotF-ruz1XiSOv7FA4KAea4e/view?usp=share_link' target="_blank" rel='noopener noreferrer'>Resume</a></li>
               <li className=' cursor-pointer ml-3 '><RiMoonFill onClick={() => {
                 setdark(!dark)
               }} className="  dark:hidden " /></li>
@@ -97,13 +97,13 @@ export default function Home() {
               <legend className="mx-auto px-4 text-black text-2xl italic"> <h3 id='about' className=' text-4xl  md:text-6xl dark:text-blue-200 text-blue-800'>About Me<br /></h3></legend>
             </fieldset>
             <div className='pt-10'>
-            <Image src="/img.jpg" width={140} height={140} className='rounded-full  '/>
+            <Image src="/img.jpg" alt="" width={140} height={140} className='rounded-full  '/>
             </div>
 
 
             <p className='text-lg  py-3 leading-8 md:text-2xl max-w-lg mx-auto'>Hi, I am Raghav , a 2024 undergraduate currently pursuing Bachelor of Technology from Maharja Agrasen Institute of Technology specialised in Information Technology Department.  </p>
 
-            <p className='text-lg py-3 leading-8 max-w-lg mx-auto md:text-2xl'>I have a deep interest in web-development and enjoyed learning new stuff . I   have made several projects using MERN stack.Apart from that I enjoyed solving problems and have solved more than 1000+ problem on various coding platforms. I am a 3 star coder at codechef and have   max-rating of 1600+ on leetcode.</p>
+            <p className='text-lg py-3 leading-8 max-w-lg mx-auto md:text-2xl'>I have a deep interest in web-development and enjoyed learning new stuff . I   have made several projects using MERN stack.Apart from that I enjoyed solving problems and have solved more than 1000+ problem on various coding platforms. I always eager to learn new things and ready to take any challenging task</p>
           </div>
           {/* Projects Section  */}
           <fieldset id='project' className="mt-10 py-2 border-t border-slate-500 dark:border-hovcol font-lobster ">
@@ -121,9 +121,9 @@ export default function Home() {
               </a>
               </h3>
               <p className='text-lg py-1 md:text-xl'>Implemented a full stack project  where user can store their memories. They can create , able to
-                update and delete it and no other users can access it. User's  authentication is done using
+                update and delete it and no other users can access it. User&apos;s  authentication is done using
                 bcrypt and jwt</p>
-              <h4 className='text-xl md:text-2xl'>ReactJs NodeJs MongoDB</h4>
+              <h4 className='text-xl md:text-2xl'>ReactJs || NodeJs || MongoDB</h4>
 
             </div>
             {/* Project---2 */}
@@ -136,7 +136,7 @@ export default function Home() {
                   <FiExternalLink className=' inline  hover:text-blue-800 cursor-pointer dark:hover:text-hovcol text-xl md:text-2xl ml-3 mb-2' /></a></h3>
               <p className='text-lg py-1 md:text-xl'>Implemented a coinworld which gives the data of all cryptocurrencies its prices,its market valuation and daily changes
                 it gives the trending graph of various currencies and various news related to crypto</p>
-              <h4 className='text-xl md:text-2xl'>ReactJs RapidApi AntDesign </h4>
+              <h4 className='text-xl md:text-2xl'>ReactJs || RapidApi || AntDesign </h4>
 
             </div>
             {/* Project---4 */}
@@ -148,8 +148,8 @@ export default function Home() {
                 <a href='https://github.com/jharaghav32/YourNews' target="_blank" rel='noopener noreferrer'>
                   <FiGithub className=' inline cursor-pointer hover:text-blue-800 dark:hover:text-hovcol text-xl md:text-2xl ml-3' /></a></h3>
               <p className='text-lg py-1 md:text-xl'>Implemented a news app which provides us the news of various categories along with its published
-              date . User's can get detailed views . Used RapidApI for fetching News data</p>
-              <h4 className='text-xl md:text-2xl'>ReactJs RapidApi</h4>
+              date . User&apos;s can get detailed views . Used RapidApI for fetching News data</p>
+              <h4 className='text-xl md:text-2xl'>ReactJs || RapidApi</h4>
 
             </div>
             {/* Project---3 */}
@@ -162,7 +162,7 @@ export default function Home() {
                   <FiGithub className=' inline cursor-pointer hover:text-blue-800 dark:hover:text-hovcol text-xl md:text-2xl ml-3' /></a></h3>
               <p className='text-lg py-1 md:text-xl'>It provides   Real time tracking of students learnings outcomes and their academic progress  , track record of student&apos;s performance in both academic and cocurricular activities
                 schools.</p>
-              <h4 className='text-xl md:text-2xl'>HTML CSS Bootstrap Javascript</h4>
+              <h4 className='text-xl md:text-2xl'>HTML || CSS || Bootstrap || JS</h4>
 
             </div>
               {/* Project---4 */}
@@ -178,7 +178,7 @@ export default function Home() {
               Users can see various videos of various categories , able to see Number of views, channel of Uploaders,
               Comments on Video and many more features.
                </p>
-              <h4 className='text-xl md:text-2xl'>ReactJs,RapidApi,Material@UI</h4>
+              <h4 className='text-xl md:text-2xl'>ReactJs || RapidApi || Material@UI</h4>
 
             </div>
           </div>
