@@ -1,318 +1,700 @@
 import Head from 'next/head'
 import Image from 'next/legacy/image'
-
-import { Figtree, Inter } from '@next/font/google'
-import { useState, useEffect } from 'react'
+import { Syne, Sora, JetBrains_Mono } from '@next/font/google'
+import { useState, useEffect, useRef, type ReactNode } from 'react'
 import { RiMoonFill, RiSunFill } from 'react-icons/ri'
-import { AiFillLinkedin, AiFillTwitterCircle, AiFillFacebook, AiFillGithub } from 'react-icons/ai'
-import { FiGithub ,FiExternalLink} from 'react-icons/fi'
+import { RxHamburgerMenu, RxCross2 } from 'react-icons/rx'
+import { AiFillLinkedin, AiFillGithub } from 'react-icons/ai'
+import { FiGithub, FiExternalLink, FiArrowUpRight, FiMapPin } from 'react-icons/fi'
 import { GrLinkedinOption } from 'react-icons/gr'
-import { SiLeetcode, SiGmail, SiCodechef } from 'react-icons/si'
-import styles from '../styles/Home.module.css'
-import img from '../public/seimg.jpg';
-import { RxHamburgerMenu } from 'react-icons/rx'
+import {
+  SiLeetcode, SiGmail, SiCodechef, SiReact, SiNodedotjs, SiMongodb,
+  SiJavascript, SiCplusplus, SiC, SiGit, SiTailwindcss, SiTypescript,
+  SiNextdotjs, SiNestjs, SiExpress, SiDocker, SiPostgresql,
+} from 'react-icons/si'
 
-const inter = Inter({ subsets: ['latin'] })
+const display = Syne({ subsets: ['latin'], weight: ['600', '700', '800'], variable: '--font-syne' })
+const sans = Sora({ subsets: ['latin'], weight: ['300', '400', '500', '600'], variable: '--font-sora' })
+const mono = JetBrains_Mono({ subsets: ['latin'], weight: ['400', '500', '700'], variable: '--font-mono' })
+
+/* ---------- Data ---------- */
+const NAV = [
+  { label: 'About', href: '#about' },
+  { label: 'Experience', href: '#experience' },
+  { label: 'Projects', href: '#projects' },
+  { label: 'Skills', href: '#skills' },
+  { label: 'Achievements', href: '#achievements' },
+  { label: 'Contact', href: '#contact' },
+]
+
+// cl = color on light theme · cd = color on dark theme (kept readable per background)
+const SOCIALS = [
+  { Icon: AiFillLinkedin, href: 'https://www.linkedin.com/in/jharaghav/', label: 'LinkedIn', cl: '#0A66C2', cd: '#4493E0' },
+  { Icon: AiFillGithub, href: 'https://github.com/jharaghav32', label: 'GitHub', cl: '#24292F', cd: '#E6EDF3' },
+  { Icon: SiLeetcode, href: 'https://leetcode.com/raghav32/', label: 'LeetCode', cl: '#EA8A00', cd: '#FFA116' },
+  { Icon: SiCodechef, href: 'https://www.codechef.com/users/jharaghav_3209', label: 'CodeChef', cl: '#5B4638', cd: '#BC8A63' },
+]
+
+const STATS = [
+  { k: '2+ yrs', v: 'Experience' },
+  { k: '1000+', v: 'Problems Solved' },
+  { k: '9.1', v: 'CGPA' },
+  { k: 'Top 30', v: 'HackRX 3.0' },
+]
+
+// color = vivid brand (dark-theme glow) · light = paper-safe shade (light-theme at rest)
+const STACK = [
+  { Icon: SiCplusplus, name: 'C++', color: '#00599C', light: '#00599C' },
+  { Icon: SiC, name: 'C', color: '#5C6BC0', light: '#4F5BB3' },
+  { Icon: SiJavascript, name: 'JavaScript', color: '#F7DF1E', light: '#CA8A04' },
+  { Icon: SiTypescript, name: 'TypeScript', color: '#3178C6', light: '#2F6CB0' },
+  { Icon: SiReact, name: 'React', color: '#61DAFB', light: '#0891B2' },
+  { Icon: SiNextdotjs, name: 'Next.js', color: '#FFFFFF', light: '#111827' },
+  { Icon: SiNodedotjs, name: 'Node.js', color: '#5FA04E', light: '#4D8A3E' },
+  { Icon: SiNestjs, name: 'NestJS', color: '#E0234E', light: '#D11E45' },
+  { Icon: SiExpress, name: 'Express', color: '#FFFFFF', light: '#374151' },
+  { Icon: SiMongodb, name: 'MongoDB', color: '#47A248', light: '#3F8C3F' },
+  { Icon: SiPostgresql, name: 'PostgreSQL', color: '#4169E1', light: '#36569E' },
+  { Icon: SiTailwindcss, name: 'Tailwind', color: '#06B6D4', light: '#0E8AA6' },
+  { Icon: SiDocker, name: 'Docker', color: '#2496ED', light: '#1D7FCB' },
+  { Icon: SiGit, name: 'Git', color: '#F05032', light: '#E1421F' },
+]
+
+const EXPERIENCE = [
+  {
+    role: 'Software Developer',
+    company: 'BitQit Private Limited',
+    location: 'New Delhi, India',
+    period: 'Feb 2024 — Present',
+    points: [
+      'Replaced Azure Service Bus with BullMQ, cutting queue-processing time by 40% and lowering cloud costs by removing external message-queue dependencies — with persistent retries for stronger fault tolerance.',
+      'Built CI/CD pipelines with GitHub Actions — pre-merge PR builds and automated tests for early bug detection and consistent code quality.',
+      'Decoupled API services and background jobs into separate containers, enabling faster deployments, better fault isolation and improved scalability.',
+      'Migrated legacy Node.js services to NestJS for a modular, maintainable and scalable architecture.',
+      'Developed a prefix-search feature with Apache Lucene, improving product-search efficiency by 25%.',
+    ],
+    stack: ['NestJS', 'Node.js', 'BullMQ', 'Docker', 'GitHub Actions', 'Apache Lucene'],
+  },
+  {
+    role: 'Full-Stack Developer',
+    company: 'Iconic Pages',
+    location: 'Nagpur, Maharashtra',
+    period: 'Jun 2023 — Aug 2023',
+    points: [
+      'Designed and built responsive, accessible interfaces with Next.js, React.js and Material UI.',
+      'Integrated Firebase Authentication with Google Sign-In to streamline user onboarding.',
+      'Collaborated in an agile team to ship scalable features, optimising APIs and cutting response times by 20%.',
+    ],
+    stack: ['Next.js', 'React', 'Material UI', 'Firebase'],
+  },
+]
+
+const PROJECTS = [
+  {
+    n: '01', title: 'AI Chatbot',
+    desc: 'An interactive chatbot powered by OpenAI for natural, seamless conversations — with secure auth and data integrity via Firebase Admin SDK, wrapped in a responsive UI.',
+    stack: ['Next.js', 'TypeScript', 'OpenAI', 'Firebase', 'Tailwind CSS'],
+    github: 'https://github.com/jharaghav32',
+  },
+  {
+    n: '02', title: 'Memories',
+    desc: 'A full-stack CRUD app for personal memories with private, per-user access. Secure authentication with JWT and sensitive data encrypted using Bcrypt.js.',
+    stack: ['React', 'Node.js', 'MongoDB', 'JWT'],
+    github: 'https://github.com/jharaghav32/CloudMemories',
+  },
+  {
+    n: '03', title: 'MyVideo App',
+    desc: 'A YouTube-style video app — explore videos by category, views, comments and channels, with fast search powered by RapidAPI and a clean Material UI.',
+    stack: ['React', 'Material UI', 'RapidAPI'],
+    github: 'https://github.com/jharaghav32/MyVideoApp',
+  },
+  {
+    n: '04', title: 'CoinWorld',
+    desc: 'A crypto dashboard surfacing live prices, market caps and daily changes, with trending charts and curated crypto news from across the market.',
+    stack: ['React', 'RapidAPI', 'Ant Design'],
+    live: 'https://coinworld25.netlify.app/',
+  },
+  {
+    n: '05', title: 'YourNews',
+    desc: 'A category-wise news reader showing publish dates and detailed article views, powered by RapidAPI for fresh, real-time headlines.',
+    stack: ['React', 'RapidAPI'],
+    github: 'https://github.com/jharaghav32/YourNews',
+  },
+  {
+    n: '06', title: 'Loop',
+    desc: 'Real-time tracking of student learning outcomes and academic progress, spanning both academic and co-curricular performance. Built for SIH.',
+    stack: ['HTML', 'CSS', 'Bootstrap', 'JS'],
+    github: 'https://github.com/jharaghav32/MAIT_SIH',
+  },
+]
+
+const SKILLS = [
+  { group: 'Languages', items: [
+    { name: 'JavaScript', lvl: 90 }, { name: 'TypeScript', lvl: 88 },
+    { name: 'C++', lvl: 85 }, { name: 'C', lvl: 80 }, { name: 'SQL', lvl: 78 },
+  ] },
+  { group: 'Backend & Databases', items: [
+    { name: 'Node.js', lvl: 88 }, { name: 'NestJS', lvl: 85 }, { name: 'Express.js', lvl: 82 },
+    { name: 'MongoDB', lvl: 80 }, { name: 'PostgreSQL', lvl: 75 },
+  ] },
+  { group: 'Frontend', items: [
+    { name: 'React.js', lvl: 85 }, { name: 'Next.js', lvl: 82 },
+    { name: 'Tailwind CSS', lvl: 85 }, { name: 'Vue.js', lvl: 65 },
+  ] },
+  { group: 'Tools & Practices', items: [
+    { name: 'Git / GitHub', lvl: 88 }, { name: 'Docker', lvl: 78 },
+    { name: 'CI/CD', lvl: 80 }, { name: 'REST APIs', lvl: 85 },
+  ] },
+]
+
+const ACHIEVEMENTS = [
+  { t: 'Top-30 Finalist · 2500+ teams — HackRX 3.0', d: 'National hackathon organised by Bajaj Finserv Markets.' },
+  { t: '8th of Top 10 — HackNSUT-22', d: 'Hackathon powered by Agora and Filecoin.' },
+  { t: 'Global Rank 67 — CodeChef Starters', d: '3★ rated competitive programmer on CodeChef.' },
+  { t: '1000+ DSA problems solved', d: 'Across LeetCode and CodeChef.' },
+]
+
+/* ---------- Reveal-on-scroll ---------- */
+function Reveal({
+  children, className = '', delay = 0, as,
+}: { children: ReactNode; className?: string; delay?: number; as?: any }) {
+  const Tag: any = as || 'div'
+  const ref = useRef<HTMLElement | null>(null)
+  const [visible, setVisible] = useState(false)
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true)
+          io.disconnect()
+        }
+      },
+      { threshold: 0.15, rootMargin: '0px 0px -8% 0px' },
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
+  return (
+    <Tag
+      ref={ref}
+      className={`reveal ${visible ? 'reveal-visible' : ''} ${className}`}
+      style={{ transitionDelay: `${delay}ms` }}
+    >
+      {children}
+    </Tag>
+  )
+}
+
+/* ---------- Cursor-following glow ---------- */
+function CursorGlow() {
+  const ref = useRef<HTMLDivElement | null>(null)
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    if (
+      window.matchMedia('(hover: none)').matches ||
+      window.matchMedia('(pointer: coarse)').matches ||
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    ) {
+      return
+    }
+    const SIZE = 224 // half of the 448px glow
+    let tx = window.innerWidth / 2
+    let ty = window.innerHeight / 2
+    let cx = tx
+    let cy = ty
+    let started = false
+    let raf = 0
+    const onMove = (e: MouseEvent) => {
+      tx = e.clientX
+      ty = e.clientY
+      if (!started) {
+        started = true
+        el.style.opacity = '1'
+      }
+    }
+    const loop = () => {
+      cx += (tx - cx) * 0.12
+      cy += (ty - cy) * 0.12
+      el.style.transform = `translate3d(${cx - SIZE}px, ${cy - SIZE}px, 0)`
+      raf = requestAnimationFrame(loop)
+    }
+    window.addEventListener('mousemove', onMove)
+    raf = requestAnimationFrame(loop)
+    return () => {
+      window.removeEventListener('mousemove', onMove)
+      cancelAnimationFrame(raf)
+    }
+  }, [])
+  return (
+    <div
+      ref={ref}
+      aria-hidden
+      className="pointer-events-none fixed left-0 top-0 z-0 hidden h-[448px] w-[448px] rounded-full opacity-0 transition-opacity duration-500 md:block"
+      style={{
+        background:
+          'radial-gradient(circle, rgb(var(--c-accent) / 0.13) 0%, rgb(var(--c-accent) / 0.05) 38%, transparent 70%)',
+        willChange: 'transform',
+      }}
+    />
+  )
+}
+
+/* ---------- Section heading ---------- */
+function SectionHead({ n, title }: { n: string; title: string }) {
+  return (
+    <Reveal className="mb-12 flex items-end gap-4">
+      <span className="font-mono text-sm text-accent">{n}</span>
+      <h2 className="font-display text-3xl font-bold tracking-tight md:text-5xl">{title}</h2>
+      <span className="mb-2 hidden h-px flex-1 bg-line/15 sm:block" />
+    </Reveal>
+  )
+}
 
 export default function Home() {
-  const [dark, setdark] = useState(true);
-  const [visible, setvisible] = useState(false);
-  //  useEffect(()=>{
-  //   let initialScroll=0
-  //   window.addEventListener('scroll',()=>{
-  //   let currScroll =  window.scrollY; 
-  //   if(currScroll-initialScroll<0 ){
-  //       setvisible(false);
-  //   }
-  //   else{
-  //     setvisible(false);
-  //   }
-  //   initialScroll=currScroll;
-  //   })
-  //  },[])
+  const [dark, setDark] = useState(true)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+  const [progress, setProgress] = useState(0)
+
+  useEffect(() => {
+    const root = document.documentElement
+    if (dark) root.classList.add('dark')
+    else root.classList.remove('dark')
+  }, [dark])
+
+  useEffect(() => {
+    const onScroll = () => {
+      const h = document.documentElement
+      const max = h.scrollHeight - h.clientHeight
+      setProgress(max > 0 ? (h.scrollTop / max) * 100 : 0)
+      setScrolled(h.scrollTop > 16)
+    }
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   return (
-
-    <div className={dark ? "dark" : " "}>
+    <div className={`${display.variable} ${sans.variable} ${mono.variable} font-sans`}>
       <Head>
-       
-        <title>Raghav Kumar Jha</title>
-        <meta name="description" content="Generated by create next app" />
+        <title>Raghav Kumar Jha — Software Developer</title>
+        <meta
+          name="description"
+          content="Raghav Kumar Jha — Software Developer at BitQit building scalable backend systems and full-stack products with NestJS, Node.js & React. 1000+ DSA problems solved."
+        />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#060912" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className='px-10 bg-white md:px-20 lg:px-60 dark:bg-darkbg dark:text-white italic' >
-        <section >
-        {/* NavBar */}
-          <nav className='py-10 mb-10 flex   justify-between font-lobster text-xl md:text-3xl ' >
-            <h1 className='  font-lobster dark:text-hovcol text-gray-700 mx-2 my-2 '>PORTFOLIO</h1>
-            <ul className='flex items-center'>
-              <div className='md:flex hidden'>
 
-                <li className='text-xl dark:hover:text-hovcol mx-2 dark:text-blue-200 text-blue-800 ' ><a href='#about' className='active:text-hovcol'>About</a></li>
-                <li className='text-xl dark:hover:text-hovcol mx-2 dark:text-blue-200 text-blue-800'><a href='#project'>Project</a></li>
-                <li className='text-xl dark:hover:text-hovcol mx-2 dark:text-blue-200 text-blue-800'><a href='#skills'>Skill</a></li>
-                <li className='text-xl dark:hover:text-hovcol mx-2 dark:text-blue-200 text-blue-800'><a href='#achievment'>Achievment</a></li>
-                <li className='text-xl dark:hover:text-hovcol mx-2 dark:text-blue-200 text-blue-800'><a href='#contact'>Contact</a></li>
-              </div>
-              <li className='py-2 px-4 bg-blue-400 hover:bg-blue-500 rounded-md  text-black ml-5 font-lobster dark:bg-slate-800  dark:hover:bg-slate-700 dark:text-hovcol '><a href='#' target="_blank" rel='noopener noreferrer'>Resume</a></li>
-              <li className=' cursor-pointer ml-3 '><RiMoonFill onClick={() => {
-                setdark(!dark)
-              }} className="  dark:hidden " /></li>
-              <li className=' cursor-pointer '><RiSunFill onClick={() => {
-                setdark(!dark)
-              }} className="hidden dark:text-yellow-400 dark:block   text-xl md:text-4xl " /></li>
+      {/* Scroll progress bar */}
+      <div
+        className="fixed left-0 top-0 z-[60] h-[3px] bg-gradient-to-r from-accent to-gold transition-[width] duration-150"
+        style={{ width: `${progress}%` }}
+      />
 
+      {/* Aurora atmosphere */}
+      <div aria-hidden className="pointer-events-none fixed inset-0 z-0 overflow-hidden opacity-[0.28] dark:opacity-100">
+        <div className="absolute -left-[10%] -top-[15%] h-[55vh] w-[55vh] animate-aurora rounded-full bg-accent/25 blur-[120px]" />
+        <div className="absolute right-[-10%] top-[20%] h-[50vh] w-[50vh] animate-aurora rounded-full bg-accent/15 blur-[130px] [animation-delay:-7s] dark:bg-gold/15" />
+        <div className="absolute bottom-[-15%] left-[30%] h-[45vh] w-[45vh] animate-aurora rounded-full bg-accent/10 blur-[120px] [animation-delay:-13s]" />
+      </div>
 
+      {/* Cursor-following glow */}
+      <CursorGlow />
+
+      <div className="relative z-10 min-h-screen text-ink">
+        {/* ---------- NAV ---------- */}
+        <header
+          className={`sticky top-0 z-50 transition-all duration-300 ${
+            scrolled ? 'glass border-b border-line/10' : ''
+          }`}
+        >
+          <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4 md:px-10">
+            <a href="#top" className="group flex items-center gap-2">
+              <span className="grid h-9 w-9 place-items-center rounded-lg border border-line/15 bg-surface font-display text-sm font-extrabold text-accent transition-colors group-hover:border-accent/50">
+                R
+              </span>
+              <span className="font-mono text-sm tracking-widest text-muted">
+                raghav<span className="text-accent">.jha</span>
+              </span>
+            </a>
+
+            <ul className="hidden items-center gap-8 md:flex">
+              {NAV.map((item, i) => (
+                <li key={item.href}>
+                  <a href={item.href} className="nav-link font-mono text-sm text-muted transition-colors hover:text-ink">
+                    <span className="text-accent">0{i + 1}.</span> {item.label}
+                  </a>
+                </li>
+              ))}
             </ul>
+
+            <div className="flex items-center gap-3">
+              <button
+                aria-label="Toggle theme"
+                onClick={() => setDark((d) => !d)}
+                className="grid h-10 w-10 place-items-center rounded-lg border border-line/15 bg-surface text-lg transition-colors hover:border-accent/50 hover:text-accent"
+              >
+                {dark ? <RiSunFill /> : <RiMoonFill />}
+              </button>
+              <button
+                aria-label="Menu"
+                onClick={() => setMenuOpen((o) => !o)}
+                className="grid h-10 w-10 place-items-center rounded-lg border border-line/15 bg-surface text-lg md:hidden"
+              >
+                {menuOpen ? <RxCross2 /> : <RxHamburgerMenu />}
+              </button>
+            </div>
           </nav>
-          {/* Small introduction Section  */}
-          <div className='text-center text-gray-700 p-10 font-lobster dark:text-white'>
-            {/* <p className='text-hovcol text-2xl '>Hi , my name is  </p> */}
-            <h1 className=' text-4xl font-lobster text-blue-800  md:text-7xl dark:text-blue-200  '>Raghav Kumar Jha</h1>
-            <h2 className='text-2xl font-lobster pb-3 md:text-4xl text-blue-800 dark:text-blue-200'>Software Developer</h2>
-            <p className=' text-lg py-3 leading-7 max-w-lg mx-auto md:text-2xl'>Highly motivated  always eager to learn new skills passionate about web-development  and problem-solving wanted to contribute in software development field</p>
-          </div>
-          <div className='flex flex-wrap justify-center text-3xl text-gray-700 gap-16 pb-20 md:text-5xl  dark:text-slate-300'>
-            <a href='https://www.linkedin.com/in/jharaghav/' target="_blank"  rel='noopener noreferrer'>
-              <AiFillLinkedin className='hover:text-blue-800 hover:dark:text-hovcol hover:-translate-y-1' />
-            </a>
-            <a href='https://github.com/jharaghav32' target="_blank" rel='noopener noreferrer'>
-              <AiFillGithub className='hover:text-black hover:dark:text-hovcol hover:-translate-y-1' />
-            </a>
-            <a href='https://leetcode.com/raghav32/' target="_blank" rel='noopener noreferrer'>
 
-              <SiLeetcode className='hover:text-orange-400 hover:dark:text-hovcol hover:-translate-y-1' />
-            </a>
-            <a href='https://www.codechef.com/users/jharaghav_3209' target="_blank" rel='noopener noreferrer'>
+          {/* Mobile menu */}
+          {menuOpen && (
+            <div className="glass border-t border-line/10 md:hidden">
+              <ul className="mx-auto flex max-w-6xl flex-col gap-1 px-6 py-4">
+                {NAV.map((item, i) => (
+                  <li key={item.href}>
+                    <a
+                      href={item.href}
+                      onClick={() => setMenuOpen(false)}
+                      className="block rounded-lg px-3 py-3 font-mono text-sm text-muted transition-colors hover:bg-accent/10 hover:text-accent"
+                    >
+                      <span className="text-accent">0{i + 1}.</span> {item.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </header>
 
-              <SiCodechef className='hover:text-orange-700 hover:dark:text-hovcol hover:-translate-y-1 ' />
-            </a>
-          </div>
-        </section>
-        {/* About section */}
-        <section >
-          <div className='text-center text-gray-700 font-lobster py-10 dark:text-white '>
-            <fieldset className="border-t border-slate-500 dark:border-hovcol">
-              <legend className="mx-auto px-4 text-black text-2xl italic"> <h3 id='about' className=' text-4xl  md:text-6xl dark:text-blue-200 text-blue-800'>About Me<br /></h3></legend>
-            </fieldset>
-            <div className='pt-10'>
-            <Image src="/img.jpg" alt="" width={140} height={140} className='rounded-full  '/>
+        <main id="top" className="mx-auto max-w-6xl px-6 md:px-10">
+          {/* ---------- HERO ---------- */}
+          <section className="grid items-center gap-12 py-16 md:grid-cols-[1.15fr_0.85fr] md:py-28">
+            <div>
+              <p className="animate-fade-up font-mono text-sm tracking-wider text-accent [animation-delay:.05s]">
+                {'// hi, my name is'}
+              </p>
+              <h1 className="mt-4 animate-fade-up font-display text-5xl font-extrabold leading-[1.05] tracking-tight [animation-delay:.15s] md:text-7xl">
+                Raghav Kumar
+                <br />
+                <span className="text-gradient animate-gradient-x">Jha.</span>
+              </h1>
+              <h2 className="mt-4 animate-fade-up font-display text-2xl font-semibold text-muted [animation-delay:.25s] md:text-4xl">
+                I build things for the web.
+              </h2>
+              <p className="mt-3 animate-fade-up font-mono text-sm text-accent [animation-delay:.3s] md:text-base">
+                Software Developer @ BitQit
+              </p>
+              <p className="mt-6 max-w-xl animate-fade-up text-base leading-8 text-muted [animation-delay:.35s] md:text-lg">
+                I build scalable backend systems and full-stack products with NestJS, Node.js and
+                React — caring about clean architecture, performance and reliability. Off the clock,
+                I&apos;m a competitive programmer with 1000+ problems solved.
+              </p>
+
+              <div className="mt-8 flex animate-fade-up flex-wrap items-center gap-4 [animation-delay:.45s]">
+                <a
+                  href="#projects"
+                  className="group inline-flex items-center gap-2 rounded-lg bg-accent px-6 py-3 font-mono text-sm font-medium text-bg transition-all hover:shadow-[0_10px_40px_-10px_rgb(var(--c-accent)/0.7)] hover:-translate-y-0.5"
+                >
+                  View my work
+                  <FiArrowUpRight className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                </a>
+                <a
+                  href="#contact"
+                  className="inline-flex items-center gap-2 rounded-lg border border-line/20 px-6 py-3 font-mono text-sm text-ink transition-all hover:border-accent/50 hover:text-accent"
+                >
+                  Get in touch
+                </a>
+              </div>
+
+              <div className="mt-10 flex animate-fade-up items-center gap-6 text-3xl [animation-delay:.55s]">
+                {SOCIALS.map(({ Icon, href, label, cl, cd }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={label}
+                    style={{ ['--sl' as any]: cl, ['--sd' as any]: cd }}
+                    className="text-[color:var(--sl)] transition-all duration-300 hover:-translate-y-1 dark:text-[color:var(--sd)]"
+                  >
+                    <Icon />
+                  </a>
+                ))}
+              </div>
             </div>
 
-
-            <p className='text-lg  py-3 leading-8 md:text-2xl max-w-lg mx-auto'>Hi, I am Raghav , a 2024 undergraduate currently pursuing Bachelor of Technology from Maharja Agrasen Institute of Technology specialised in Information Technology Department.  </p>
-
-            <p className='text-lg py-3 leading-8 max-w-lg mx-auto md:text-2xl'>I have a deep interest in web-development and enjoyed learning new stuff . I   have made several projects using MERN stack.Apart from that I enjoyed solving problems and have solved more than 1000+ problem on various coding platforms. I always eager to learn new things and ready to take any challenging task</p>
-          </div>
-          {/* Projects Section  */}
-          <fieldset id='project' className="mt-10 py-2 border-t border-slate-500 dark:border-hovcol font-lobster ">
-            <legend className="mx-auto px-4 text-black text-2xl italic"> <h3 id='about' className=' text-4xl md:text-6xl dark:text-blue-200 text-blue-800 '>My Projects<br /></h3></legend>
-          </fieldset>
-          {/* Project---1 */}
-          <div className='md:flex md:flex-wrap  gap-10 justify-center'>
-            {/* <h1 className=' text-4xl py-2 md:text-5xl dark:text-blue-200 text-center'>My Projects</h1> */}
-            <div className=' text-center p-10 text-gray-700 font-lobster shadow-lg rounded-xl my-8 md:w-5/12 dark:text-white dark:bg-dcardbg hover:-translate-y-2'>
-              <div className='flex justify-center m-1'>
-                <Image src="/has.jpg" alt='' width={100} height={100} />
+            {/* Portrait */}
+            <div className="animate-fade-in [animation-delay:.4s]">
+              <div className="relative mx-auto w-fit animate-float">
+                {/* offset dotted frame */}
+                <div className="absolute -bottom-4 -right-4 h-full w-full rounded-3xl border border-accent/40" />
+                <div className="absolute -inset-4 rounded-[2rem] bg-gradient-to-tr from-accent/20 via-transparent to-gold/20 blur-2xl" />
+                <div className="relative h-64 w-64 overflow-hidden rounded-3xl border border-line/15 bg-surface shadow-2xl md:h-80 md:w-80">
+                  <Image src="/img.jpg" alt="Raghav Kumar Jha" layout="fill" objectFit="cover" objectPosition="center top" />
+                  <div className="absolute inset-0 hidden bg-gradient-to-t from-bg/40 to-transparent dark:block" />
+                </div>
+                {/* status badge */}
+                <div className="absolute -bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-2 rounded-full border border-line/15 bg-surface px-4 py-2 font-mono text-xs shadow-xl">
+                  <span className="relative flex h-2 w-2">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
+                  </span>
+                  SDE @ BitQit
+                </div>
               </div>
-              <h3 className='text-2xl md:text-3xl'><span className='dark:text-blue-200 text-blue-800'>Memories</span><a href='https://github.com/jharaghav32/CloudMemories' target="_blank" rel='noopener noreferrer'>
-                <FiGithub className=' inline cursor-pointer hover:text-blue-800 dark:hover:text-hovcol text-xl md:text-2xl ml-3' />
+            </div>
+          </section>
+
+          {/* Stats */}
+          <Reveal className="elev grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-line/10 bg-line/10 sm:grid-cols-4">
+            {STATS.map((s) => (
+              <div key={s.v} className="bg-surface/85 dark:bg-surface/60 px-6 py-7 text-center backdrop-blur-sm">
+                <div className="font-display text-3xl font-bold text-accent md:text-4xl">{s.k}</div>
+                <div className="mt-1 font-mono text-xs uppercase tracking-wider text-muted">{s.v}</div>
+              </div>
+            ))}
+          </Reveal>
+
+          {/* Tech marquee */}
+          <div className="marquee mt-14">
+            <div className="marquee-track animate-marquee">
+              {[...STACK, ...STACK].map(({ Icon, name, color, light }, i) => (
+                <div
+                  key={i}
+                  className="group mx-7 flex items-center gap-3 py-2 text-muted"
+                  style={{ ['--bc' as any]: color, ['--bcl' as any]: light }}
+                >
+                  <Icon className="text-2xl text-[color:var(--bcl)] transition-transform duration-300 group-hover:scale-110 dark:text-[color:var(--bc)]" />
+                  <span className="font-mono text-sm transition-colors duration-300 group-hover:text-ink">{name}</span>
+                  <span className="ml-7 text-accent/30">/</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* ---------- ABOUT ---------- */}
+          <section id="about" className="scroll-mt-24 py-24">
+            <SectionHead n="01." title="About Me" />
+            <div className="grid gap-12 md:grid-cols-[1.4fr_1fr]">
+              <Reveal delay={80}>
+                <div className="space-y-5 text-base leading-8 text-muted md:text-lg">
+                  <p>
+                    Hi! I&apos;m Raghav — an{' '}
+                    <span className="text-ink">Software Developer at BitQit</span>, where I
+                    build scalable backend systems and full-stack products that real clients depend on.
+                  </p>
+                  <p>
+                    I work across the stack with{' '}
+                    <span className="text-accent">NestJS, Node.js, React and Next.js</span>, and I care
+                    about clean architecture, performance and reliability — from cutting queue-processing
+                    time by 40% to shipping CI/CD pipelines and containerised services.
+                  </p>
+                  <p>
+                    I graduated with a B.Tech in Information Technology (9.1 CGPA) from{' '}
+                    <span className="text-ink">Maharaja Agrasen Institute of Technology</span>, Delhi.
+                    Off the clock, I&apos;m an avid competitive programmer with{' '}
+                    <span className="text-accent">1000+ problems</span> solved.
+                  </p>
+                </div>
+              </Reveal>
+
+              <Reveal delay={160}>
+                <div className="elev rounded-2xl border border-line/10 bg-surface/85 dark:bg-surface/60 p-7 backdrop-blur-sm">
+                  <h3 className="font-mono text-sm uppercase tracking-wider text-accent">Quick facts</h3>
+                  <ul className="mt-5 space-y-4 font-mono text-sm">
+                    <li className="flex items-center gap-3 text-muted">
+                      <FiMapPin className="text-accent" /> Delhi, India
+                    </li>
+                    <li className="flex items-center gap-3 text-muted">
+                      <span className="text-accent">{'>'}</span> SDE @ BitQit
+                    </li>
+                    <li className="flex items-center gap-3 text-muted">
+                      <span className="text-accent">{'>'}</span> B.Tech IT · 9.1 CGPA · MAIT 2024
+                    </li>
+                    <li className="flex items-center gap-3 text-muted">
+                      <span className="text-accent">{'>'}</span> 1000+ solved · 3★ CodeChef
+                    </li>
+                  </ul>
+                </div>
+              </Reveal>
+            </div>
+          </section>
+
+          {/* ---------- EXPERIENCE ---------- */}
+          <section id="experience" className="scroll-mt-24 py-24">
+            <SectionHead n="02." title="Experience" />
+            <div className="relative space-y-8 border-l border-line/15 pl-8 md:pl-10">
+              {EXPERIENCE.map((e, i) => (
+                <Reveal key={e.company} delay={i * 90} className="relative">
+                  <span className="absolute -left-[41px] top-7 grid h-4 w-4 place-items-center rounded-full border-2 border-accent bg-bg md:-left-[49px]">
+                    <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+                  </span>
+                  <div className="elev rounded-2xl border border-line/10 bg-surface/85 p-7 backdrop-blur-sm transition-colors hover:border-accent/30 dark:bg-surface/60">
+                    <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-1">
+                      <div>
+                        <h3 className="font-display text-xl font-bold md:text-2xl">{e.role}</h3>
+                        <p className="mt-1 font-mono text-sm text-accent">{e.company}</p>
+                      </div>
+                      <div className="font-mono text-xs text-muted sm:text-right">
+                        <p>{e.period}</p>
+                        <p className="mt-1">{e.location}</p>
+                      </div>
+                    </div>
+                    <ul className="mt-5 space-y-2.5">
+                      {e.points.map((pt, j) => (
+                        <li key={j} className="flex gap-3 text-sm leading-7 text-muted">
+                          <span className="mt-[11px] h-1.5 w-1.5 shrink-0 rounded-full bg-accent/70" />
+                          <span>{pt}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <div className="mt-6 flex flex-wrap gap-2">
+                      {e.stack.map((t) => (
+                        <span key={t} className="rounded-md border border-line/15 px-2.5 py-1 font-mono text-[11px] text-muted">
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </section>
+
+          {/* ---------- PROJECTS ---------- */}
+          <section id="projects" className="scroll-mt-24 py-24">
+            <SectionHead n="03." title="Projects" />
+            <div className="grid gap-6 md:grid-cols-2">
+              {PROJECTS.map((p, i) => (
+                <Reveal
+                  key={p.title}
+                  delay={(i % 2) * 90}
+                  className="elev group relative flex flex-col overflow-hidden rounded-2xl border border-line/10 bg-surface/85 dark:bg-surface/60 p-7 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-accent/40 hover:shadow-[0_24px_70px_-30px_rgb(var(--c-accent)/0.5)]"
+                >
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-accent/[0.06] to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                  <div className="relative flex items-center justify-between">
+                    <span className="font-mono text-4xl font-bold text-line/20 transition-colors group-hover:text-accent/40">
+                      {p.n}
+                    </span>
+                    <div className="flex items-center gap-3 text-xl text-muted">
+                      {p.github && (
+                        <a href={p.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub repo" className="transition-colors hover:text-accent">
+                          <FiGithub />
+                        </a>
+                      )}
+                      {p.live && (
+                        <a href={p.live} target="_blank" rel="noopener noreferrer" aria-label="Live site" className="transition-colors hover:text-accent">
+                          <FiExternalLink />
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                  <h3 className="relative mt-4 font-display text-2xl font-bold transition-colors group-hover:text-accent">
+                    {p.title}
+                  </h3>
+                  <p className="relative mt-3 flex-1 text-sm leading-7 text-muted">{p.desc}</p>
+                  <div className="relative mt-5 flex flex-wrap gap-2">
+                    {p.stack.map((t) => (
+                      <span key={t} className="rounded-md border border-line/15 px-2.5 py-1 font-mono text-[11px] text-muted">
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </section>
+
+          {/* ---------- SKILLS ---------- */}
+          <section id="skills" className="scroll-mt-24 py-24">
+            <SectionHead n="04." title="Skills" />
+            <div className="grid gap-6 md:grid-cols-2">
+              {SKILLS.map((cat, ci) => (
+                <Reveal
+                  key={cat.group}
+                  delay={(ci % 2) * 90}
+                  className="elev rounded-2xl border border-line/10 bg-surface/85 dark:bg-surface/60 p-7 backdrop-blur-sm transition-colors hover:border-accent/30"
+                >
+                  <h3 className="font-display text-xl font-bold text-accent">{cat.group}</h3>
+                  <ul className="mt-6 space-y-5">
+                    {cat.items.map((it) => (
+                      <li key={it.name}>
+                        <div className="mb-2 flex items-center justify-between font-mono text-xs">
+                          <span className="text-ink">{it.name}</span>
+                          <span className="text-muted">{it.lvl}%</span>
+                        </div>
+                        <div className="bar">
+                          <span className="bar-fill" style={{ ['--w' as any]: `${it.lvl}%` }} />
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </Reveal>
+              ))}
+            </div>
+          </section>
+
+          {/* ---------- ACHIEVEMENTS ---------- */}
+          <section id="achievements" className="scroll-mt-24 py-24">
+            <SectionHead n="05." title="Achievements" />
+            <div className="relative border-l border-line/15 pl-8">
+              {ACHIEVEMENTS.map((a, i) => (
+                <Reveal key={a.t} delay={i * 60} className="relative pb-9 last:pb-0">
+                  <span className="absolute -left-[37px] top-1.5 grid h-4 w-4 place-items-center rounded-full border-2 border-accent bg-bg">
+                    <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+                  </span>
+                  <h3 className="font-display text-lg font-semibold md:text-xl">{a.t}</h3>
+                  <p className="mt-1 text-sm text-muted">{a.d}</p>
+                </Reveal>
+              ))}
+            </div>
+          </section>
+
+          {/* ---------- CONTACT ---------- */}
+          <section id="contact" className="scroll-mt-24 py-24 text-center">
+            <Reveal>
+              <p className="font-mono text-sm tracking-wider text-accent">06. What&apos;s next?</p>
+              <h2 className="mx-auto mt-4 max-w-2xl font-display text-4xl font-extrabold tracking-tight md:text-6xl">
+                Let&apos;s build something together.
+              </h2>
+              <p className="mx-auto mt-6 max-w-xl text-base leading-8 text-muted md:text-lg">
+                I&apos;m always open to connecting — whether it&apos;s about an opportunity, a
+                collaboration, or just a good engineering conversation. My inbox is always open.
+              </p>
+              <a
+                href="mailto:raghavkumarjha3209@gmail.com"
+                className="mt-9 inline-flex items-center gap-2 rounded-lg border border-accent/50 px-8 py-4 font-mono text-sm text-accent transition-all hover:bg-accent/10 hover:-translate-y-0.5 hover:shadow-[0_12px_40px_-12px_rgb(var(--c-accent)/0.6)]"
+              >
+                <SiGmail /> Say hello
               </a>
-              </h3>
-              <p className='text-lg py-1 md:text-xl'>Implemented a full stack project  where user can store their memories. They can create , able to
-                update and delete it and no other users can access it. User&apos;s  authentication is done using
-                bcrypt and jwt</p>
-              <h4 className='text-xl md:text-2xl'>ReactJs || NodeJs || MongoDB</h4>
-
-            </div>
-            {/* Project---2 */}
-            <div className='text-center p-10 text-gray-700 font-lobster shadow-lg rounded-xl my-8 md:w-5/12 dark:text-white dark:bg-dcardbg hover:-translate-y-2'>
-              <div className='flex justify-center m-1'>
-                <Image src="/has.jpg" alt='' width={100} height={100} className=''  />
-              </div>
-              <h3 className='text-2xl md:text-3xl'><span className='dark:text-blue-200 text-blue-800'>CoinWorld</span>
-                <a href='https://coinworld25.netlify.app/' target="_blank" rel='noopener noreferrer'>
-                  <FiExternalLink className=' inline  hover:text-blue-800 cursor-pointer dark:hover:text-hovcol text-xl md:text-2xl ml-3 mb-2' /></a></h3>
-              <p className='text-lg py-1 md:text-xl'>Implemented a coinworld which gives the data of all cryptocurrencies its prices,its market valuation and daily changes
-                it gives the trending graph of various currencies and various news related to crypto</p>
-              <h4 className='text-xl md:text-2xl'>ReactJs || RapidApi || AntDesign </h4>
-
-            </div>
-            {/* Project---4 */}
-            <div className='text-center p-10 text-gray-700 font-lobster shadow-lg rounded-xl my-8 md:w-5/12 dark:text-white dark:bg-dcardbg hover:-translate-y-2'>
-              <div className='flex justify-center m-1'>
-                <Image src="/has.jpg" alt='' width={100} height={100} />
-              </div>
-              <h3 className='text-2xl md:text-3xl'><span className='dark:text-blue-200 text-blue-800'>YourNews</span>
-                <a href='https://github.com/jharaghav32/YourNews' target="_blank" rel='noopener noreferrer'>
-                  <FiGithub className=' inline cursor-pointer hover:text-blue-800 dark:hover:text-hovcol text-xl md:text-2xl ml-3' /></a></h3>
-              <p className='text-lg py-1 md:text-xl'>Implemented a news app which provides us the news of various categories along with its published
-              date . User&apos;s can get detailed views . Used RapidApI for fetching News data</p>
-              <h4 className='text-xl md:text-2xl'>ReactJs || RapidApi</h4>
-
-            </div>
-            {/* Project---3 */}
-            <div className='text-center p-10 text-gray-700 font-lobster shadow-lg rounded-xl my-8 md:w-5/12 dark:text-white dark:bg-dcardbg hover:-translate-y-2'>
-              <div className='flex justify-center m-1'>
-                <Image src="/has.jpg" alt='' width={100} height={100} />
-              </div>
-              <h3 className='text-2xl md:text-3xl'><span className='dark:text-blue-200 text-blue-800'>Loop</span>
-                <a href='https://github.com/jharaghav32/MAIT_SIH' target="_blank" rel='noopener noreferrer'>
-                  <FiGithub className=' inline cursor-pointer hover:text-blue-800 dark:hover:text-hovcol text-xl md:text-2xl ml-3' /></a></h3>
-              <p className='text-lg py-1 md:text-xl'>It provides   Real time tracking of students learnings outcomes and their academic progress  , track record of student&apos;s performance in both academic and cocurricular activities
-                schools.</p>
-              <h4 className='text-xl md:text-2xl'>HTML || CSS || Bootstrap || JS</h4>
-
-            </div>
-              {/* Project---4 */}
-              <div className='text-center p-10 text-gray-700 font-lobster shadow-lg rounded-xl my-8 md:w-5/12 dark:text-white dark:bg-dcardbg hover:-translate-y-2'>
-              <div className='flex justify-center m-1'>
-                <Image src="/has.jpg" alt='' width={100} height={100} />
-              </div>
-              <h3 className='text-2xl md:text-3xl'><span className='dark:text-blue-200 text-blue-800'>MyVideo App</span>
-                <a href='https://github.com/jharaghav32/MyVideoApp' target="_blank" rel='noopener noreferrer'>
-                  <FiGithub className=' inline cursor-pointer hover:text-blue-800 dark:hover:text-hovcol text-xl md:text-2xl ml-3' /></a></h3>
-              <p className='text-lg py-1 md:text-xl'>
-              Implemeted a Video Application (like Youtube Clone) App . 
-              Users can see various videos of various categories , able to see Number of views, channel of Uploaders,
-              Comments on Video and many more features.
-               </p>
-              <h4 className='text-xl md:text-2xl'>ReactJs || RapidApi || Material@UI</h4>
-
-            </div>
-          </div>
-        </section>
-        <section id='skills'>
-          <div className='text-center text-gray-700 font-lobster py-10 dark:text-white '>
-            <fieldset className="border-t border-slate-500 dark:border-hovcol">
-              <legend className="mx-auto px-4 text-black text-2xl italic"> <h3 id='about' className=' text-4xl  md:text-6xl dark:text-blue-200 text-blue-800'>Skills<br /></h3></legend>
-            </fieldset>
-            <div className='md:flex flex-wrap justify-center gap-10'>
-              <div className=' p-10 text-gray-700 font-lobster shadow-lg rounded-xl my-8 md:w-5/12 dark:text-white dark:bg-dcardbg hover:-translate-y-2'>
-                <h1 className='text-3xl md:text-5xl dark:text-blue-200 text-blue-800 '>Languages</h1>
-                <ul className='mt-10'>
-
-
-                  <li className='p-3'>
-                    <h1 className=' text-start'>C</h1>
-                    <span className='block h-2 bg-gray-600 w-full'><span className='bg-blue-800 block h-2 w-[90%]  dark:bg-hovcol'></span></span>
-                  </li>  <li className='p-3'>
-                    <h1 className=' text-start'>C++</h1>
-                    <span className='block h-2 bg-gray-600 w-full'><span className='bg-blue-800 block h-2 w-[91%]  dark:bg-hovcol'></span></span>
-                  </li>
-                  <li className='p-3'>
-                    <h1 className=' text-start'>JAVASCRIPT</h1>
-                    <span className='block h-2 bg-gray-600 w-full'><span className='bg-blue-800 block h-2 w-[75%]  dark:bg-hovcol'></span></span>
-                  </li>
-                </ul>
-              </div>
-              <div className=' p-10 text-gray-700 font-lobster shadow-lg rounded-xl my-8 md:w-5/12 dark:text-white dark:bg-dcardbg hover:-translate-y-2'>
-                <h1 className='text-3xl md:text-5xl dark:text-blue-200 text-blue-800'>Web-Frameworks</h1>
-                <ul>
-                  <li className='p-3'>
-                    <h1 className=' text-start'>HTML</h1>
-                    <span className='block h-2 bg-gray-600 w-full'><span className='bg-blue-800 block h-2 w-[80%]  dark:bg-hovcol'></span></span>
-                  </li>
-                  <li className='p-3'>
-                    <h1 className=' text-start'>CSS</h1>
-                    <span className='block h-2 bg-gray-600 w-full'><span className='bg-blue-800 block h-2 w-[81%]  dark:bg-hovcol'></span></span>
-                  </li>
-                  <li className='p-3'>
-                    <h1 className=' text-start'>NODEJS</h1>
-                    <span className='block h-2 bg-gray-600 w-full'><span className='bg-blue-800 block h-2 w-[65%]  dark:bg-hovcol'></span></span>
-                  </li>  <li className='p-3'>
-                    <h1 className=' text-start'>REACTJS</h1>
-                    <span className='block h-2 bg-gray-600 w-full'><span className='bg-blue-800 block h-2 w-[70%]  dark:bg-hovcol'></span></span>
-                  </li>
-                  <li className='p-3'>
-                    <h1 className=' text-start'>MONGODB</h1>
-                    <span className='block h-2 bg-gray-600 w-full'><span className='bg-blue-800 block h-2 w-[65%]  dark:bg-hovcol'></span></span>
-                  </li>
-                </ul>
-              </div>
-              <div className=' p-10 text-gray-700 font-lobster shadow-lg rounded-xl my-8 md:w-5/12 dark:text-white dark:bg-dcardbg hover:-translate-y-2'>
-                <h1 className='text-3xl md:text-5xl dark:text-blue-200 text-blue-800 '>Tools</h1>
-                <ul className='mt-3'>
-
-
-                  <li className='p-3'>
-                    <h1 className=' text-start'>GIT</h1>
-                    <span className='block h-2 bg-gray-600 w-full'><span className='bg-blue-800 block h-2 w-[70%]  dark:bg-hovcol'></span></span>
-                  </li>
-                  <li className='p-3'>
-                    <h1 className=' text-start'>GITHUB</h1>
-                    <span className='block h-2 bg-gray-600 w-full'><span className='bg-blue-800 block h-2 w-[75%]  dark:bg-hovcol'></span></span>
-                  </li>
-                </ul>
-              </div>
-              <div className=' p-10 text-gray-700 font-lobster shadow-lg rounded-xl my-8 md:w-5/12 dark:text-white dark:bg-dcardbg hover:-translate-y-2'>
-                <h1 className='text-3xl md:text-5xl dark:text-blue-200 text-blue-800 '>Soft-Skills</h1>
-                <ul>
-                  <li className='p-3'>
-                    <h1 className=' text-start'>PROBLEM-SOLVING</h1>
-                    <span className='block h-2 bg-gray-600 w-full'><span className='bg-blue-800 block h-2 w-[75%]  dark:bg-hovcol'></span></span>
-                  </li>
-                  <li className='p-3'>
-                    <h1 className=' text-start'>TEAM-WORK</h1>
-                    <span className='block h-2 bg-gray-600 w-full'><span className='bg-blue-800 block h-2 w-[70%]  dark:bg-hovcol'></span></span>
-                  </li>
-                  <li className='p-3'>
-                    <h1 className=' text-start'>TIME-MANAGEMENT</h1>
-                    <span className='block h-2 bg-gray-600 w-full'><span className='bg-blue-800 block h-2 w-[70%]  dark:bg-hovcol'></span></span>
-                  </li>
-
-                </ul>
-              </div>
-            </div>
-
-            {/* <p className='text-lg py-3 leading-8 md:text-xl max-w-lg mx-auto'>Lorem ipsum dolor sit amet consectetur <span className='text-red-500'>highlighted</span>   adipisicing elit. Rerum, modi voluptate nihil porro esse libero qui, deserunt consequatur non tempora eveniet fuga molestias fugiat beatae! Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique, distinctio? Sequi, illum dolorum culpa aspernatur deleniti quidem dignissimos impedit ut tempora! Cum voluptatibus corporis inventore!</p>
-
-           <p className='text-lg py-3 leading-8 max-w-lg mx-auto'>Lorem ipsum dolor sit amet consectetur <span className='text-red-500'>highlighted</span>   adipisicing elit. Rerum, modi voluptate nihil porro esse libero qui, deserunt consequatur non tempora eveniet fuga molestias fugiat beatae!</p>  */}
-          </div>
-        </section>
-        <section id='achievment'>
-          <div className='text-center text-gray-700 font-lobster py-10 dark:text-white  '>
-            <fieldset className="border-t border-slate-500 dark:border-hovcol">
-              <legend className="mx-auto px-4 text-black text-2xl italic"> <h3 id='about' className=' text-4xl  md:text-6xl dark:text-blue-200 text-blue-800'>Achievments</h3></legend>
-            </fieldset>
-            <div className='py-10'>
-              <p className='text-lg py-3 leading-8 md:text-2xl max-w-1/2 mx-auto'>Secured <span className='dark:text-hovcol text-blue-800'>top 30</span> among <span className='dark:text-hovcol text-blue-800'>2500+</span> teams nationwide in <span className='dark:text-hovcol text-blue-800'>HackRx 3.0</span> Hackathon organized by <span className='dark:text-hovcol text-blue-800'>Bajaj Finserv Market</span></p>
-
-              <p className='text-lg py-3 leading-8 max-w-1/2 mx-auto md:text-2xl'>Secured <span className='dark:text-hovcol text-blue-800'>top 10</span> in <span className='dark:text-hovcol text-blue-800'>HackNsut</span> Hackathon organised by <span className='dark:text-hovcol text-blue-800'>NSUT</span></p>
-              <p className='text-lg py-3 leading-8 md:text-2xl max-w-1/2 mx-auto'>Solved <span className='dark:text-hovcol text-blue-800'>1000 +</span> problems on various coding platform</p>
-              <p className='text-lg py-3 leading-8 md:text-2xl max-w-1/2 mx-auto'>Secured <span className='dark:text-hovcol text-blue-800'>67</span> global rank at Codechef Starter Contest</p>
-              <p className='text-lg py-3 leading-8 md:text-2xl max-w-1/2 mx-auto'><span className='dark:text-hovcol text-blue-800'>1600+</span> rating at Leetcode</p>
-              <p className='text-lg py-3 leading-8 md:text-2xl max-w-1/2 mx-auto'><span className='dark:text-hovcol text-blue-800'>3 star</span> at Codechef</p>
-
-            </div>
-          </div>
-        </section>
-
-        <section id='contact'>
-          <div className='text-center text-gray-700 font-lobster py-10 dark:text-white '>
-            <fieldset className="border-t border-slate-500 dark:border-hovcol">
-              <legend className="mx-auto px-4 text-black text-2xl italic"> <h3 id='about' className=' text-4xl  md:text-6xl dark:text-blue-200 text-blue-800'>Contact Me</h3></legend>
-            </fieldset>
-            <div className='py-5'>
-              <p className='text-lg py-3 leading-8 md:text-2xl max-w-lg mx-auto'>I am currently looking for new opportunities and I am interested in Software Development Role .Kindly Contact me through LinkedIn or Mail </p>
-              <div className='flex gap-10 justify-center text-2xl md:text-3xl py-2'>
-                <a href='https://www.linkedin.com/in/jharaghav/' target="_blank  " rel='noopener noreferrer'>
-
-                  <GrLinkedinOption className=' hover:text-blue-800 dark:hover:text-hovcol hover:-translate-y-1' />
+              <div className="mt-10 flex justify-center gap-7 text-3xl">
+                <a href="https://www.linkedin.com/in/jharaghav/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="text-[#0A66C2] transition-all duration-300 hover:-translate-y-1 dark:text-[#4493E0]">
+                  <GrLinkedinOption />
                 </a>
-                <a href='mailto:raghavkumarjha3209@gmail.com' target="_blank" rel='noopener noreferrer'>
-
-                  <SiGmail className='hover:text-red-600 dark:hover:text-hovcol hover:-translate-y-1' />
+                <a href="mailto:raghavkumarjha3209@gmail.com" aria-label="Email" className="text-[#EA4335] transition-all duration-300 hover:-translate-y-1">
+                  <SiGmail />
+                </a>
+                <a href="https://github.com/jharaghav32" target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="text-[#24292F] transition-all duration-300 hover:-translate-y-1 dark:text-[#E6EDF3]">
+                  <AiFillGithub />
                 </a>
               </div>
+            </Reveal>
+          </section>
+        </main>
 
-            </div>
+        {/* ---------- FOOTER ---------- */}
+        <footer className="border-t border-line/10 py-8">
+          <div className="mx-auto flex max-w-6xl flex-col items-center gap-2 px-6 font-mono text-xs text-muted md:px-10">
+            <p>Designed &amp; built by Raghav Kumar Jha</p>
+            <p className="text-muted/60">Next.js · TypeScript · Tailwind CSS</p>
           </div>
-        </section>
-
-      </main>
+        </footer>
+      </div>
     </div>
-
   )
 }
