@@ -258,6 +258,35 @@ export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [progress, setProgress] = useState(0)
+  const [sending, setSending] = useState(false)
+  const [formStatus, setFormStatus] = useState<{ ok: boolean; msg: string } | null>(null)
+
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setSending(true)
+    setFormStatus(null)
+    const form = e.currentTarget
+    const data = new FormData(form)
+    data.append('access_key', process.env.NEXT_PUBLIC_WEB3FORMS_KEY || '72cc631e-deca-4ac8-992b-fd385f78dada')
+    try {
+      const res = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        body: data,
+      })
+      const json = await res.json()
+      if (json.success) {
+        setFormStatus({ ok: true, msg: "Thanks! Your message has been sent — I'll get back to you soon." })
+        form.reset()
+        setTimeout(() => setFormStatus(null), 5000)
+      } else {
+        setFormStatus({ ok: false, msg: json.message || 'Something went wrong. Please try again.' })
+      }
+    } catch {
+      setFormStatus({ ok: false, msg: 'Network error. Please try again or email me directly.' })
+    } finally {
+      setSending(false)
+    }
+  }
 
   useEffect(() => {
     const root = document.documentElement
@@ -314,12 +343,16 @@ export default function Home() {
           }`}
         >
           <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4 md:px-10">
-            <a href="#top" className="group flex items-center gap-2">
-              <span className="grid h-9 w-9 place-items-center rounded-lg border border-line/15 bg-surface font-display text-sm font-extrabold text-accent transition-colors group-hover:border-accent/50">
-                R
+            <a href="#top" className="group flex items-center gap-2.5">
+              <span className="relative grid h-9 w-9 place-items-center overflow-hidden rounded-lg bg-gradient-to-br from-accent to-gold p-[1.5px] shadow-[0_0_0_0_rgb(var(--c-accent)/0)] transition-all duration-500 group-hover:-rotate-6 group-hover:shadow-[0_8px_24px_-8px_rgb(var(--c-accent)/0.6)]">
+                <span className="grid h-full w-full place-items-center rounded-[6px] bg-surface font-display text-sm font-extrabold">
+                  <span className="bg-gradient-to-br from-accent to-gold bg-clip-text text-transparent">R</span>
+                </span>
+                <span aria-hidden className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-full" />
               </span>
               <span className="font-mono text-sm tracking-widest text-muted">
                 raghav<span className="text-accent">.jha</span>
+                <span aria-hidden className="ml-px inline-block animate-pulse text-accent">_</span>
               </span>
             </a>
 
@@ -336,10 +369,21 @@ export default function Home() {
             <div className="flex items-center gap-3">
               <button
                 aria-label="Toggle theme"
+                title={dark ? 'Switch to light mode' : 'Switch to dark mode'}
                 onClick={() => setDark((d) => !d)}
-                className="grid h-10 w-10 place-items-center rounded-lg border border-line/15 bg-surface text-lg transition-colors hover:border-accent/50 hover:text-accent"
+                className="group relative grid h-10 w-10 place-items-center overflow-hidden rounded-lg border border-line/15 bg-surface transition-colors hover:border-accent/50"
               >
-                {dark ? <RiSunFill /> : <RiMoonFill />}
+                <span aria-hidden className="pointer-events-none absolute inset-0 bg-accent/0 transition-colors duration-300 group-hover:bg-accent/10" />
+                <RiSunFill
+                  className={`absolute text-lg text-gold transition-all duration-500 ${
+                    dark ? 'rotate-0 scale-100 opacity-100' : 'rotate-90 scale-0 opacity-0'
+                  }`}
+                />
+                <RiMoonFill
+                  className={`absolute text-lg text-accent transition-all duration-500 ${
+                    dark ? '-rotate-90 scale-0 opacity-0' : 'rotate-0 scale-100 opacity-100'
+                  }`}
+                />
               </button>
               <button
                 aria-label="Menu"
@@ -484,7 +528,7 @@ export default function Home() {
               <Reveal delay={80}>
                 <div className="space-y-5 text-base leading-8 text-muted md:text-lg">
                   <p>
-                    Hi! I&apos;m Raghav — an{' '}
+                    Hi! I&apos;m Raghav — a{' '}
                     <span className="text-ink">Software Developer at BitQit</span>, where I
                     build scalable backend systems and full-stack products that real clients depend on.
                   </p>
@@ -666,12 +710,67 @@ export default function Home() {
                 I&apos;m always open to connecting — whether it&apos;s about an opportunity, a
                 collaboration, or just a good engineering conversation. My inbox is always open.
               </p>
-              <a
-                href="mailto:raghavkumarjha3209@gmail.com"
-                className="mt-9 inline-flex items-center gap-2 rounded-lg border border-accent/50 px-8 py-4 font-mono text-sm text-accent transition-all hover:bg-accent/10 hover:-translate-y-0.5 hover:shadow-[0_12px_40px_-12px_rgb(var(--c-accent)/0.6)]"
+              <form
+                onSubmit={onSubmit}
+                className="mx-auto mt-12 max-w-xl space-y-4 text-left"
               >
-                <SiGmail /> Say hello
-              </a>
+                {/* Honeypot field for spam bots */}
+                <input type="checkbox" name="botcheck" className="hidden" style={{ display: 'none' }} tabIndex={-1} autoComplete="off" />
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <label htmlFor="name" className="mb-2 block font-mono text-xs text-muted">
+                      Name
+                    </label>
+                    <input
+                      id="name"
+                      name="name"
+                      type="text"
+                      required
+                      placeholder="Your name"
+                      className="w-full rounded-lg border border-line/20 bg-transparent px-4 py-3 text-sm text-ink outline-none transition-colors placeholder:text-muted/60 focus:border-accent/60"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="email" className="mb-2 block font-mono text-xs text-muted">
+                      Email
+                    </label>
+                    <input
+                      id="email"
+                      name="email"
+                      type="email"
+                      required
+                      placeholder="you@example.com"
+                      className="w-full rounded-lg border border-line/20 bg-transparent px-4 py-3 text-sm text-ink outline-none transition-colors placeholder:text-muted/60 focus:border-accent/60"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label htmlFor="message" className="mb-2 block font-mono text-xs text-muted">
+                    Message
+                  </label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    required
+                    rows={5}
+                    placeholder="Tell me about your project or just say hi…"
+                    className="w-full resize-y rounded-lg border border-line/20 bg-transparent px-4 py-3 text-sm text-ink outline-none transition-colors placeholder:text-muted/60 focus:border-accent/60"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={sending}
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-accent px-8 py-4 font-mono text-sm font-medium text-bg transition-all hover:-translate-y-0.5 hover:shadow-[0_12px_40px_-12px_rgb(var(--c-accent)/0.6)] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+                >
+                  {sending ? 'Sending…' : 'Send message'}
+                </button>
+                {formStatus && (
+                  <p className={`font-mono text-sm ${formStatus.ok ? 'text-accent' : 'text-[#EA4335]'}`}>
+                    {formStatus.msg}
+                  </p>
+                )}
+              </form>
+
               <div className="mt-10 flex justify-center gap-7 text-3xl">
                 <a href="https://www.linkedin.com/in/jharaghav/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="text-[#0A66C2] transition-all duration-300 hover:-translate-y-1 dark:text-[#4493E0]">
                   <GrLinkedinOption />
