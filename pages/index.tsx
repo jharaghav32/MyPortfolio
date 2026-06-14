@@ -1,4 +1,5 @@
 import Head from 'next/head'
+import Script from 'next/script'
 import Image from 'next/legacy/image'
 import { Syne, Sora, JetBrains_Mono } from '@next/font/google'
 import { useState, useEffect, useRef, type ReactNode } from 'react'
@@ -260,9 +261,28 @@ export default function Home() {
   const [progress, setProgress] = useState(0)
   const [sending, setSending] = useState(false)
   const [formStatus, setFormStatus] = useState<{ ok: boolean; msg: string } | null>(null)
+  const [cooldown, setCooldown] = useState(0)
+
+  const COOLDOWN_SECONDS = 60
+  const turnstileKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
+
+  // Restore any active cooldown after a refresh
+  useEffect(() => {
+    const last = Number(localStorage.getItem('contactLastSent') || 0)
+    const remaining = COOLDOWN_SECONDS - Math.floor((Date.now() - last) / 1000)
+    if (last && remaining > 0) setCooldown(remaining)
+  }, [])
+
+  // Tick the cooldown down to zero
+  useEffect(() => {
+    if (cooldown <= 0) return
+    const id = setInterval(() => setCooldown((c) => (c <= 1 ? 0 : c - 1)), 1000)
+    return () => clearInterval(id)
+  }, [cooldown])
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    if (sending || cooldown > 0) return
     setSending(true)
     setFormStatus(null)
     const form = e.currentTarget
@@ -277,6 +297,9 @@ export default function Home() {
       if (json.success) {
         setFormStatus({ ok: true, msg: "Thanks! Your message has been sent — I'll get back to you soon." })
         form.reset()
+        localStorage.setItem('contactLastSent', String(Date.now()))
+        setCooldown(COOLDOWN_SECONDS)
+        ;(window as any).turnstile?.reset()
         setTimeout(() => setFormStatus(null), 5000)
       } else {
         setFormStatus({ ok: false, msg: json.message || 'Something went wrong. Please try again.' })
@@ -710,6 +733,12 @@ export default function Home() {
                 I&apos;m always open to connecting — whether it&apos;s about an opportunity, a
                 collaboration, or just a good engineering conversation. My inbox is always open.
               </p>
+              {turnstileKey && (
+                <Script
+                  src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+                  strategy="lazyOnload"
+                />
+              )}
               <form
                 onSubmit={onSubmit}
                 className="mx-auto mt-12 max-w-xl space-y-4 text-left"
@@ -757,12 +786,15 @@ export default function Home() {
                     className="w-full resize-y rounded-lg border border-line/20 bg-transparent px-4 py-3 text-sm text-ink outline-none transition-colors placeholder:text-muted/60 focus:border-accent/60"
                   />
                 </div>
+                {turnstileKey && (
+                  <div className="cf-turnstile" data-sitekey={turnstileKey} data-theme="auto" />
+                )}
                 <button
                   type="submit"
-                  disabled={sending}
+                  disabled={sending || cooldown > 0}
                   className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-accent px-8 py-4 font-mono text-sm font-medium text-bg transition-all hover:-translate-y-0.5 hover:shadow-[0_12px_40px_-12px_rgb(var(--c-accent)/0.6)] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
                 >
-                  {sending ? 'Sending…' : 'Send message'}
+                  {cooldown > 0 ? `Please wait ${cooldown}s` : sending ? 'Sending…' : 'Send message'}
                 </button>
                 {formStatus && (
                   <p className={`font-mono text-sm ${formStatus.ok ? 'text-accent' : 'text-[#EA4335]'}`}>
