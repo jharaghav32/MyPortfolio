@@ -343,12 +343,16 @@ export default function Home() {
           }`}
         >
           <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4 md:px-10">
-            <a href="#top" className="group flex items-center gap-2">
-              <span className="grid h-9 w-9 place-items-center rounded-lg border border-line/15 bg-surface font-display text-sm font-extrabold text-accent transition-colors group-hover:border-accent/50">
-                R
+            <a href="#top" className="group flex items-center gap-2.5">
+              <span className="relative grid h-9 w-9 place-items-center overflow-hidden rounded-lg bg-gradient-to-br from-accent to-gold p-[1.5px] shadow-[0_0_0_0_rgb(var(--c-accent)/0)] transition-all duration-500 group-hover:-rotate-6 group-hover:shadow-[0_8px_24px_-8px_rgb(var(--c-accent)/0.6)]">
+                <span className="grid h-full w-full place-items-center rounded-[6px] bg-surface font-display text-sm font-extrabold">
+                  <span className="bg-gradient-to-br from-accent to-gold bg-clip-text text-transparent">R</span>
+                </span>
+                <span aria-hidden className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-full" />
               </span>
               <span className="font-mono text-sm tracking-widest text-muted">
                 raghav<span className="text-accent">.jha</span>
+                <span aria-hidden className="ml-px inline-block animate-pulse text-accent">_</span>
               </span>
             </a>
 
@@ -365,10 +369,21 @@ export default function Home() {
             <div className="flex items-center gap-3">
               <button
                 aria-label="Toggle theme"
+                title={dark ? 'Switch to light mode' : 'Switch to dark mode'}
                 onClick={() => setDark((d) => !d)}
-                className="grid h-10 w-10 place-items-center rounded-lg border border-line/15 bg-surface text-lg transition-colors hover:border-accent/50 hover:text-accent"
+                className="group relative grid h-10 w-10 place-items-center overflow-hidden rounded-lg border border-line/15 bg-surface transition-colors hover:border-accent/50"
               >
-                {dark ? <RiSunFill /> : <RiMoonFill />}
+                <span aria-hidden className="pointer-events-none absolute inset-0 bg-accent/0 transition-colors duration-300 group-hover:bg-accent/10" />
+                <RiSunFill
+                  className={`absolute text-lg text-gold transition-all duration-500 ${
+                    dark ? 'rotate-0 scale-100 opacity-100' : 'rotate-90 scale-0 opacity-0'
+                  }`}
+                />
+                <RiMoonFill
+                  className={`absolute text-lg text-accent transition-all duration-500 ${
+                    dark ? '-rotate-90 scale-0 opacity-0' : 'rotate-0 scale-100 opacity-100'
+                  }`}
+                />
               </button>
               <button
                 aria-label="Menu"
