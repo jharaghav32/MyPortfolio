@@ -484,7 +484,7 @@ export default function Home() {
               <Reveal delay={80}>
                 <div className="space-y-5 text-base leading-8 text-muted md:text-lg">
                   <p>
-                    Hi! I&apos;m Raghav — an{' '}
+                    Hi! I&apos;m Raghav — a{' '}
                     <span className="text-ink">Software Developer at BitQit</span>, where I
                     build scalable backend systems and full-stack products that real clients depend on.
                   </p>
