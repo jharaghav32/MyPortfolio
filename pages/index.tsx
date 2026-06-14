@@ -258,6 +258,35 @@ export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [progress, setProgress] = useState(0)
+  const [sending, setSending] = useState(false)
+  const [formStatus, setFormStatus] = useState<{ ok: boolean; msg: string } | null>(null)
+
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setSending(true)
+    setFormStatus(null)
+    const form = e.currentTarget
+    const data = new FormData(form)
+    data.append('access_key', process.env.NEXT_PUBLIC_WEB3FORMS_KEY || '72cc631e-deca-4ac8-992b-fd385f78dada')
+    try {
+      const res = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        body: data,
+      })
+      const json = await res.json()
+      if (json.success) {
+        setFormStatus({ ok: true, msg: "Thanks! Your message has been sent — I'll get back to you soon." })
+        form.reset()
+        setTimeout(() => setFormStatus(null), 5000)
+      } else {
+        setFormStatus({ ok: false, msg: json.message || 'Something went wrong. Please try again.' })
+      }
+    } catch {
+      setFormStatus({ ok: false, msg: 'Network error. Please try again or email me directly.' })
+    } finally {
+      setSending(false)
+    }
+  }
 
   useEffect(() => {
     const root = document.documentElement
@@ -666,12 +695,67 @@ export default function Home() {
                 I&apos;m always open to connecting — whether it&apos;s about an opportunity, a
                 collaboration, or just a good engineering conversation. My inbox is always open.
               </p>
-              <a
-                href="mailto:raghavkumarjha3209@gmail.com"
-                className="mt-9 inline-flex items-center gap-2 rounded-lg border border-accent/50 px-8 py-4 font-mono text-sm text-accent transition-all hover:bg-accent/10 hover:-translate-y-0.5 hover:shadow-[0_12px_40px_-12px_rgb(var(--c-accent)/0.6)]"
+              <form
+                onSubmit={onSubmit}
+                className="mx-auto mt-12 max-w-xl space-y-4 text-left"
               >
-                <SiGmail /> Say hello
-              </a>
+                {/* Honeypot field for spam bots */}
+                <input type="checkbox" name="botcheck" className="hidden" style={{ display: 'none' }} tabIndex={-1} autoComplete="off" />
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <label htmlFor="name" className="mb-2 block font-mono text-xs text-muted">
+                      Name
+                    </label>
+                    <input
+                      id="name"
+                      name="name"
+                      type="text"
+                      required
+                      placeholder="Your name"
+                      className="w-full rounded-lg border border-line/20 bg-transparent px-4 py-3 text-sm text-ink outline-none transition-colors placeholder:text-muted/60 focus:border-accent/60"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="email" className="mb-2 block font-mono text-xs text-muted">
+                      Email
+                    </label>
+                    <input
+                      id="email"
+                      name="email"
+                      type="email"
+                      required
+                      placeholder="you@example.com"
+                      className="w-full rounded-lg border border-line/20 bg-transparent px-4 py-3 text-sm text-ink outline-none transition-colors placeholder:text-muted/60 focus:border-accent/60"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label htmlFor="message" className="mb-2 block font-mono text-xs text-muted">
+                    Message
+                  </label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    required
+                    rows={5}
+                    placeholder="Tell me about your project or just say hi…"
+                    className="w-full resize-y rounded-lg border border-line/20 bg-transparent px-4 py-3 text-sm text-ink outline-none transition-colors placeholder:text-muted/60 focus:border-accent/60"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={sending}
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-accent px-8 py-4 font-mono text-sm font-medium text-bg transition-all hover:-translate-y-0.5 hover:shadow-[0_12px_40px_-12px_rgb(var(--c-accent)/0.6)] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+                >
+                  {sending ? 'Sending…' : 'Send message'}
+                </button>
+                {formStatus && (
+                  <p className={`font-mono text-sm ${formStatus.ok ? 'text-accent' : 'text-[#EA4335]'}`}>
+                    {formStatus.msg}
+                  </p>
+                )}
+              </form>
+
               <div className="mt-10 flex justify-center gap-7 text-3xl">
                 <a href="https://www.linkedin.com/in/jharaghav/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="text-[#0A66C2] transition-all duration-300 hover:-translate-y-1 dark:text-[#4493E0]">
                   <GrLinkedinOption />
