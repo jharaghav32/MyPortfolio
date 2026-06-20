@@ -340,7 +340,9 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#060912" />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
         <link rel="alternate icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" href="/favicon.png" />
       </Head>
 
       {/* Scroll progress bar */}
